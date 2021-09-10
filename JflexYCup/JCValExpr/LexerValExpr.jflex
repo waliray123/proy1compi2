@@ -58,15 +58,7 @@ espacioblanco       = ({espacio}|{saltoLinea}| [\t\n])+
 //Reglas Lexicas
 <YYINITIAL> {        
     {espacioblanco}         {/*vacio*/}
-    /*-------- Palabras Reservadas --------*/
-    [tT]"rue"               {return new Symbol(sym.VERDADERO,yyline+1,yycolumn+1, yytext());}
-    [vV]"erdadero"          {return new Symbol(sym.VERDADERO,yyline+1,yycolumn+1, yytext());}
-    [fF]"alse"              {return new Symbol(sym.FALSO,yyline+1,yycolumn+1, yytext());}
-    [fF]"also"              {return new Symbol(sym.FALSO,yyline+1,yycolumn+1, yytext());}
-    [nN]"ulo"               {return new Symbol(sym.NULO,yyline+1,yycolumn+1, yytext());}
-    {cadena}                {return new Symbol(sym.CADENA,yyline+1,yycolumn+1, yytext());}  
-    {caracter}              {return new Symbol(sym.CARACTER,yyline+1,yycolumn+1, yytext());}  
-    {numero}                {return new Symbol(sym.NUMERO,yyline+1,yycolumn+1, yytext());}     
+    
     /*------------ Operadores ------------*/
     "++"                    {return new Symbol(sym.OPINCR,yyline+1,yycolumn+1, yytext());}
     "--"                    {return new Symbol(sym.OPDECR,yyline+1,yycolumn+1, yytext());}
@@ -100,7 +92,15 @@ espacioblanco       = ({espacio}|{saltoLinea}| [\t\n])+
     ","                     {return new Symbol(sym.COMA,yyline+1,yycolumn+1, yytext());}      
     "="                     {return new Symbol(sym.IGUAL,yyline+1,yycolumn+1, yytext());}      
 
-
+    /*-------- Palabras Reservadas --------*/
+    [tT]"rue"               {return new Symbol(sym.VERDADERO,yyline+1,yycolumn+1, yytext());}
+    [vV]"erdadero"          {return new Symbol(sym.VERDADERO,yyline+1,yycolumn+1, yytext());}
+    [fF]"alse"              {return new Symbol(sym.FALSO,yyline+1,yycolumn+1, yytext());}
+    [fF]"also"              {return new Symbol(sym.FALSO,yyline+1,yycolumn+1, yytext());}
+    [nN]"ulo"               {return new Symbol(sym.NULO,yyline+1,yycolumn+1, yytext());}
+    {cadena}                {return new Symbol(sym.CADENA,yyline+1,yycolumn+1, yytext());}  
+    {caracter}              {return new Symbol(sym.CARACTER,yyline+1,yycolumn+1, yytext());}  
+    {numero}                {return new Symbol(sym.NUMERO,yyline+1,yycolumn+1, yytext());}     
     
 
 }

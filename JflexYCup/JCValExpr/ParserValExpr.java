@@ -291,8 +291,8 @@ public class ParserValExpr extends java_cup.runtime.lr_parser {
     }
 
     private ExprVal obtenerMod(ExprVal val1,ExprVal val2){
-        int intVal1 = Integer.parseInt(val1.getVal());
-        int intVal2 = Integer.parseInt(val2.getVal());
+        int intVal1 = parseStringToInt(val1.getVal());
+        int intVal2 = parseStringToInt(val2.getVal());
         int valor = intVal1 % intVal2;
         ExprVal expresionDev = new ExprVal("numero",String.valueOf(valor));     
         return expresionDev;
@@ -440,14 +440,14 @@ public class ParserValExpr extends java_cup.runtime.lr_parser {
         String valor = "";
         switch(tipo){
             case "==":
-                if(dobVal1 == dobVal2){
+                if(dobVal1.equals(dobVal2)){
                     valor = "true";
                 }else{
                     valor = "false";
                 }
                 break;
             case "!=":
-                if(dobVal1 != dobVal2){
+                if(dobVal1.equals(dobVal2) == false){
                     valor = "true";
                 }else{
                     valor = "false";
@@ -554,6 +554,13 @@ public class ParserValExpr extends java_cup.runtime.lr_parser {
         }
         ExprVal expresionDev = new ExprVal("boolean",valor);  
         return expresionDev;
+    }
+
+    private int parseStringToInt(String val){
+        int valR = 0;
+        Double valD = Double.parseDouble(val);
+        valR = (int)Math.round(valD);
+        return valR;
     }
 
     private void insertarExprValResp(ExprVal val){

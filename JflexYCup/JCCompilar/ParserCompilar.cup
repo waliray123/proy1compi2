@@ -9,6 +9,7 @@ import Objetos.Expresion;
 import Objetos.Instruccion;
 import Objetos.Parametro;
 import Objetos.Condicion;
+import Objetos.Lista;
 import Objetos.Instrucciones.Asignacion;
 import Objetos.Instrucciones.Dimension;
 import Objetos.Instrucciones.Declaracion;
@@ -49,6 +50,7 @@ parser code {:
     private Mientras mientrasAct;
     private Stack<Mientras> desdesMientras;
     private SwitchC switchAct;
+    private Lista listaAct;
 
 	public ParserCompilar(LexerCompilar lex) {
 		super(lex);
@@ -61,6 +63,7 @@ parser code {:
         this.expresionesArreglos = new Stack<>();   
         this.instruccionesFunciones = new ArrayList<>();
         this.dentroDeFuncion = false;
+        this.listaAct = null;
 	}
 
     /**
@@ -235,12 +238,13 @@ parser code {:
         this.declDimPadre.insertarDimension(dimension);
     }
 
-    private void crearAsignacion(String variable, boolean esArreglo,boolean esPara){
+    private void crearAsignacion(String variable, boolean esArreglo,boolean esPara,boolean esIncremento){
         this.asignacionAct = new Asignacion("asignacion",this.cantidadIdentaciones);        
         this.asignacionAct.setVariable(variable);
         this.valoresExpresion = new ArrayList<>();
         this.asignacionAct.setValoresDecl(this.valoresExpresion);
         this.asignacionAct.setEsArreglo(esArreglo);
+        this.asignacionAct.setEsIncremento(esIncremento);
         if(esPara){
             this.paraAct.setAsignacion(this.asignacionAct);            
         }else{
@@ -485,6 +489,9 @@ parser code {:
                     }else if(tipoInstruccion.equals("mientras")){
                         Mientras mientrasIns = (Mientras) instruccionFun;
                         mientrasIns.insertarInstruccion(instruccion);
+                    }else if(tipoInstruccion.equals("hacer")){
+                        Mientras mientrasIns = (Mientras) instruccionFun;
+                        mientrasIns.insertarInstruccion(instruccion);
                     }
                     insertarInstruccionEnFunciones(instruccion);
                     break;
@@ -516,6 +523,37 @@ parser code {:
             }            
         }
     }
+    
+    public Lista getLista(){
+        return this.listaAct;
+    }
+
+    private void creacionLista(){
+        this.listaAct = new Lista();
+    }
+
+    private void insertarDatoLista(String tipo,String val){
+        boolean valIns = false;
+        if(val.equals("true")){
+            valIns = true;
+        }
+        switch(tipo){
+            case "NOMBRE":
+                this.listaAct.setNombre(val.replace("\"", ""));
+                break;
+            case "RAMDOM":
+                this.listaAct.setRandom(valIns);
+                break;
+            case "CIRCULAR":
+                this.listaAct.setCircular(valIns);
+                break;
+        }
+    }    
+
+    private void insertarPistaLista(String valPista){
+        this.listaAct.insertarPista(valPista.replace("\"", ""));
+    }
+
 :}
 
 /* Terminals (tokens returned by the scanner). */
@@ -539,6 +577,7 @@ non terminal  op2,asg2,ciclo2,funciones2,funciones3;
 non terminal  cambiar,expr2,arr2p,fin1p,incrDecr;
 non terminal  funciones4,par2,expr3,fin5,fin6,arr3p;
 non terminal  tipoPara;
+non terminal  listas,datosLista,finlista,valoresLista,pistasLista;
 
 
 
@@ -559,7 +598,8 @@ inicio ::=
     |   funciones2 {:cerrarIdent();:} inicio
     |   funciones3 {:cerrarIdent();:} inicio
     |   cambiar {:cerrarIdent();:} inicio    
-    |   incrDecr {:cerrarIdent();:} inicio
+    |   incrDecr {:cerrarIdent();:} inicio    
+    |   listas  
     |   
 ;
 
@@ -692,9 +732,9 @@ fin3 ::=
 ;
 
 asg ::=
-        ID:val {:crearAsignacion(val,false,false);:} OPSUMSIM expr2
-    |   ID:val {:crearAsignacion(val,false,false);:} IGUAL expr2
-    |   ID:val {:crearAsignacion(val,true,false);:} BRACKI {:crearDimension();:} expr1 {:insertarDimensionAsign();:} BRACKD arr3 IGUAL expr2
+        ID:val {:crearAsignacion(val,false,false,true);:} OPSUMSIM expr2
+    |   ID:val {:crearAsignacion(val,false,false,false);:} IGUAL expr2
+    |   ID:val {:crearAsignacion(val,true,false,false);:} BRACKI {:crearDimension();:} expr1 {:insertarDimensionAsign();:} BRACKD arr3 IGUAL expr2
 ;
 
 arr3 ::=
@@ -768,9 +808,9 @@ op2 ::=
 ;
 
 asg2 ::=
-        ID:val {:crearAsignacion(val,false,true);:} OPSUMSIM expr1 
-    |   ID:val {:crearAsignacion(val,false,true);:} IGUAL expr1 
-    |   ID:val {:crearAsignacion(val,true,true);:} BRACKI {:crearDimension();:} expr1 {:insertarDimensionAsign();:} BRACKD arr3 IGUAL expr1
+        ID:val {:crearAsignacion(val,false,true,true);:} OPSUMSIM expr1 
+    |   ID:val {:crearAsignacion(val,false,true,false);:} IGUAL expr1 
+    |   ID:val {:crearAsignacion(val,true,true,false);:} BRACKI {:crearDimension();:} expr1 {:insertarDimensionAsign();:} BRACKD arr3 IGUAL expr1
 ;
 
 tipoPara ::=
@@ -851,4 +891,32 @@ fin6 ::=
     |   op3:o {:insExpr2(String.valueOf(o),"op");:} expr3
     |   op4:o {:insExpr2(String.valueOf(o),"op");:} expr3  
     |
+;
+
+listas ::=
+        LISTA DOSPUNT CURLBRACKI {:creacionLista();:} datosLista CURLBRACKD
+;
+
+datosLista ::=
+        NOMBRE DOSPUNT CADENA:val {:insertarDatoLista("NOMBRE",val);:} finlista
+    |   RANDOM DOSPUNT valoresLista:val {:insertarDatoLista("RAMDOM",String.valueOf(val));:} finlista
+    |   CIRCULAR DOSPUNT valoresLista:val {:insertarDatoLista("CIRCULAR",String.valueOf(val));:} finlista
+    |   PISTAS DOSPUNT BRACKI pistasLista BRACKD finlista
+    |   IDENT datosLista
+
+;
+
+finlista ::=
+        COMA datosLista
+    |   
+;
+
+valoresLista ::=
+        VERDADERO:val {:RESULT = "true";:}
+    |   FALSO:val {:RESULT = "false";:}
+;
+
+pistasLista ::=
+        ID:val {:insertarPistaLista(val);:} COMA pistasLista
+    |   ID:val {:insertarPistaLista(val);:}
 ;
