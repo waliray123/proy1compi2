@@ -459,8 +459,6 @@ public class JFPrincipal extends javax.swing.JFrame {
         jMenuArchivo = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuReportes = new javax.swing.JMenu();
-        jMenuAyuda = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -773,6 +771,11 @@ public class JFPrincipal extends javax.swing.JFrame {
         jMenuArchivo.setText("Archivo");
 
         jMenuItem1.setText("Guardar");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         jMenuArchivo.add(jMenuItem1);
 
         jMenuItem2.setText("Cargar");
@@ -784,12 +787,6 @@ public class JFPrincipal extends javax.swing.JFrame {
         jMenuArchivo.add(jMenuItem2);
 
         jMenuBar1.add(jMenuArchivo);
-
-        jMenuReportes.setText("Reportes");
-        jMenuBar1.add(jMenuReportes);
-
-        jMenuAyuda.setText("Ayuda");
-        jMenuBar1.add(jMenuAyuda);
 
         setJMenuBar(jMenuBar1);
 
@@ -1016,6 +1013,11 @@ public class JFPrincipal extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton8ActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // TODO add your handling code here:Guardar un archivo
+        
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
     class ReprodLista implements Runnable {
 
         @Override
@@ -1153,11 +1155,9 @@ public class JFPrincipal extends javax.swing.JFrame {
     private javax.swing.JList<String> jList2;
     private javax.swing.JList<String> jList3;
     private javax.swing.JMenu jMenuArchivo;
-    private javax.swing.JMenu jMenuAyuda;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenu jMenuReportes;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelBiblioteca;
     private javax.swing.JPanel jPanelFrecuencia;
